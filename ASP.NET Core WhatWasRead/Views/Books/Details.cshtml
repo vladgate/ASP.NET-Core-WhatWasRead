@@ -1,0 +1,93 @@
+﻿@using System.Text
+
+@model Book
+@{
+    ViewBag.Title = "Книги: подробно";
+}
+
+<h2 style="margin-left: 10px">Подробнее</h2>
+
+<div>
+    <hr />
+    <div class="details-left-side-panel">
+        <div class="form-group">
+            @if (Model.ImageData == null)
+            {
+                <div class="form-control-static">No Image</div>
+            }
+            else
+            {
+                <img class="img-thumbnail" width="152" height="215" src="@Url.RouteUrl("BooksIdAction", new { controller = "Books", action = "GetImage", id = Model.BookId })" />
+            }
+        </div>
+    </div>
+    <div class="details-rigth-side-panel">
+        <dl class="dl-horizontal">
+            <dt class="dt-label" style="text-align: left">
+                @Html.LabelFor(model => model.Name, "Название:")
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+
+            <dt class="dt-label" style="text-align: left">
+                @Html.LabelFor(model => model.AuthorsOfBooks, Model.AuthorsOfBooks.Select(ab => ab.Author).Count() > 1 ? "Авторы:" : "Автор:")
+            </dt>
+            <dd>
+                @Model.DisplayAuthors()
+            </dd>
+
+            <dt class="dt-label" style="text-align: left">
+                @Html.LabelFor(model => model.Pages, "Количество страниц:")
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Pages)
+            </dd>
+
+            <dt class="dt-label" style="text-align: left">
+                @Html.LabelFor(model => model.Description, "Описание:")
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Description)
+            </dd>
+
+            <dt class="dt-label" style="text-align: left">
+                @Html.LabelFor(model => model.Year, "Год издания:")
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Year)
+            </dd>
+
+            <dt class="dt-label" style="text-align: left">
+                @Html.LabelFor(model => model.Category.NameForLabels, "Категория:")
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Category.NameForLabels)
+            </dd>
+
+            <dt class="dt-label" style="text-align: left">
+                @Html.LabelFor(model => model.Language.NameForLabels, "Язык:")
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Language.NameForLabels)
+            </dd>
+
+            <dt class="dt-label" style="text-align: left">
+                @Html.LabelFor(model => model.BookTags, "Теги:")
+            </dt>
+
+            <dd>
+                @Html.CreateTagLinks(Model.BookTags.Select(bt=>bt.Tag).ToArray())
+            </dd>
+
+        </dl>
+    </div>
+</div>
+
+<p style="margin-left: 10px; font-size:medium">
+    @Html.ActionLink("Редактировать", "Edit", new { id = Model.BookId }) |
+    @Html.ActionLink("Удалить", "Delete", new { id = Model.BookId })
+</p>

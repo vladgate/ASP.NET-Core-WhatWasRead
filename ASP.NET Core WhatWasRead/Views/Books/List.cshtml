@@ -1,0 +1,10 @@
+﻿@model BooksListViewModel
+
+@{
+    ViewBag.Title = "Книги: список";
+}
+
+
+@await Component.InvokeAsync("ListContent", Model)
+
+

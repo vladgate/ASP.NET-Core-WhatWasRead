@@ -1,0 +1,14 @@
+﻿@model CreateEditBookViewModel
+
+@{
+    ViewBag.Title = "Книги: добавление";
+}
+
+<h2 style="margin-left: 10px">Добавить прочтенную книгу</h2>
+<hr />
+@using (Html.BeginForm("Create", "Books", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @await Component.InvokeAsync("CreateEditBook", Model)
+}
+

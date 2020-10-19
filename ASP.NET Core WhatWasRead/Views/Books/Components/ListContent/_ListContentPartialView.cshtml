@@ -1,0 +1,54 @@
+﻿@using System.Text;
+@model BooksListViewModel
+
+<div id="center">
+    @await Component.InvokeAsync("ListOfCategories", new { currentCategory = Model.CurrentCategory, currentTag = Model.CurrentTag, minPages = ViewBag.MinPagesActual, maxPages = ViewBag.MaxPagesActual }) @*//слева список категорий*@
+    <div id="right-panel">
+        <div id="books-list-wrapper">
+            @if (Model.Books.Count()>0)
+            {
+                @await Component.InvokeAsync("BookRows", Model.Books)
+            }
+            else
+            {
+                @await Component.InvokeAsync("NoResult")
+            }
+        </div>
+
+        <div class="bottom-paging-wrapper">
+            <div class="bottom-paging">
+                @if (Model.CurrentCategory == null)
+                {
+                   for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
+                   {
+                      string url = Url.RouteUrl("PageRoute", new { controller = "Books", action = "List", page = i, tag = Model.CurrentTag });
+                      System.Collections.Specialized.NameValueCollection collection = Helper.GetQueryCollection(this.Context.Request.QueryString);
+                      if (collection.Count != 0)
+                      {
+                         url += Helper.BuildQueryString(this.Context.Request.QueryString);
+                      }
+                        <a href="@url" class="@(i == Model.PagingInfo.CurrentPage ? "page-link selected" : "page-link")">@i.ToString()</a>
+                   }
+                }
+                else
+                {
+                   for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
+                   {
+                      string url = Url.RouteUrl("CategoryPageRoute", new { controller = "Books", action = "List", page = i, category = Model.CurrentCategory, tag = Model.CurrentTag });
+                      System.Collections.Specialized.NameValueCollection collection = Helper.GetQueryCollection(this.Context.Request.QueryString);
+                      if (collection.Count != 0)
+                      {
+                         url += Helper.BuildQueryString(this.Context.Request.QueryString);
+                      }
+
+                        <a href="@url" class="@(i == Model.PagingInfo.CurrentPage ? "page-link selected" : "page-link")">@i.ToString()</a>
+                    }
+                }
+            </div>
+            <div class="btn-placeholder">
+                <button id="btn-load-more" class="btn btn-success" type="button" @(Model.PagingInfo.TotalPages == 0 || Model.PagingInfo.TotalPages == Model.PagingInfo.CurrentPage ? "disabled" : "")>Показать еще</button>
+            </div>
+        </div>
+    </div>
+</div>
+
