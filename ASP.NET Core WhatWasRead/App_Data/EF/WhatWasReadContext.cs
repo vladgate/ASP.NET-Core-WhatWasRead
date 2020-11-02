@@ -16,6 +16,7 @@ namespace ASP.NET_Core_WhatWasRead.App_Data.EF
       public WhatWasReadContext(IConfigurationRoot config) : base()
       {
          _config = config;
+         var pm = Database.GetPendingMigrations();
          Database.Migrate();
       }
 

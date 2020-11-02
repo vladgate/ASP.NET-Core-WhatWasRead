@@ -236,7 +236,7 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
          return ViewComponent("BookRows", books);
       }
 
-      public FileResult GetImage(int id)
+      public FileContentResult GetImage(int id)
       {
          Book book = _repository.Books.FirstOrDefault(p => p.BookId == id);
          if (book != null)

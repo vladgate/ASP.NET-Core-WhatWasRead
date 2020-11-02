@@ -7,21 +7,21 @@ namespace ASP.NET_Core_WhatWasRead.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Authors",
-                columns: table => new
-                {
-                    AuthorId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(maxLength: 30, nullable: false),
-                    LastName = table.Column<string>(maxLength: 30, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Authors", x => x.AuthorId);
-                });
+         migrationBuilder.CreateTable(
+             name: "Authors",
+             columns: table => new
+             {
+                AuthorId = table.Column<int>(nullable: false)
+                     .Annotation("SqlServer:Identity", "1, 1"),
+                FirstName = table.Column<string>(maxLength: 30, nullable: false),
+                LastName = table.Column<string>(maxLength: 30, nullable: false)
+             },
+             constraints: table =>
+             {
+                table.PrimaryKey("PK_Authors", x => x.AuthorId);
+             });
 
-            migrationBuilder.CreateTable(
+         migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -297,9 +297,9 @@ namespace ASP.NET_Core_WhatWasRead.Migrations
                 name: "Languages");
 
          migrationBuilder.Sql(@" GO
-                                 DROP VIEW [dbo].[BooksWithAuthors];
-                                 GO
-                                 ");
-        }
-    }
+                                  DROP VIEW [dbo].[BooksWithAuthors];
+                                  GO
+                                  ");
+      }
+   }
 }
