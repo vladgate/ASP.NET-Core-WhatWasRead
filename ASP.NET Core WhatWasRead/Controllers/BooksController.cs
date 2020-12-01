@@ -5,9 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Collections.Specialized;
-using System.Data.SqlClient;
-using System.Configuration;
-using System.Text;
 using ASP.NET_Core_WhatWasRead.App_Data;
 using ASP.NET_Core_WhatWasRead.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +13,6 @@ using ASP.NET_Core_WhatWasRead.App_Data.DBModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Http;
 using System.IO;
-using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace ASP.NET_Core_WhatWasRead.Controllers
 {
@@ -31,20 +27,35 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
       public NameValueCollection GetQueryString(Controller controller)
       {
          var dict = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(controller.Request.QueryString.Value);
-         NameValueCollection queryString = new NameValueCollection(dict.Count);
-         foreach (var item in dict)
+         if (dict.Count > 0)
          {
-            queryString.Add(item.Key, item.Value);
+            NameValueCollection queryString = new NameValueCollection(dict.Count);
+            foreach (var item in dict)
+            {
+               queryString.Add(item.Key, item.Value);
+            }
+            return queryString;
          }
-         return queryString;
+         else
+         {
+            return null;
+         }
       }
 
       public NameValueCollection GetQueryStringWhenAppend(Controller controller)
       {
          string fullQuery = controller.Request.Headers["Referer"].ToString();
-         string querystring = fullQuery.Substring(fullQuery.IndexOf('?'));
-         NameValueCollection qscoll = HttpUtility.ParseQueryString(querystring);
-         return qscoll;
+         int indexOf = fullQuery.IndexOf('?');
+         if (indexOf >= 0)
+         {
+            string querystring = fullQuery.Substring(indexOf);
+            NameValueCollection qscoll = HttpUtility.ParseQueryString(querystring);
+            return qscoll;
+         }
+         else
+         {
+            return null;
+         }
       }
 
       public bool IsAjaxRequest(Controller controller)
@@ -52,7 +63,6 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
          return controller.Request.IsAjaxRequest();
       }
    }
-
 
    public class BooksController : Controller
    {
@@ -106,22 +116,24 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
          //update repository in accordance to query string
          IBooksRequestManager requestManager = this.BooksRequestManager;
          NameValueCollection query = requestManager.GetQueryString(this);
-         string[] queryKeys = query.AllKeys;
-
-         if (queryKeys.Length > 0 && !(queryKeys.Length == 1 && (queryKeys[0] == "tag" || queryKeys[0] == "page") || queryKeys[0] == "category"))
+         if (query != null)
          {
-            _repository.UpdateBooksFromFilterUsingRawSql(query, "books", "list");
-            var pages = query["pages"];
-            if (pages != null)
+            string[] queryKeys = query.AllKeys;
+            if (queryKeys.Length > 0 && !(queryKeys.Length == 1 && (queryKeys[0] == "tag" || queryKeys[0] == "page") || queryKeys[0] == "category"))
             {
-               string[] ar = pages.Split('-');
-               if (Int32.TryParse(ar[0], out int min))
+               _repository.UpdateBooksFromFilterUsingRawSql(query, "books", "list");
+               var pages = query["pages"];
+               if (pages != null)
                {
-                  ViewBag.MinPagesActual = min;
-               }
-               if (Int32.TryParse(ar[1], out int max))
-               {
-                  ViewBag.MaxPagesActual = max;
+                  string[] ar = pages.Split('-');
+                  if (Int32.TryParse(ar[0], out int min))
+                  {
+                     ViewBag.MinPagesActual = min;
+                  }
+                  if (Int32.TryParse(ar[1], out int max))
+                  {
+                     ViewBag.MaxPagesActual = max;
+                  }
                }
             }
          }
@@ -197,10 +209,13 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
 
          IBooksRequestManager requestManager = this.BooksRequestManager;
          NameValueCollection query = requestManager.GetQueryStringWhenAppend(this);
-         string[] queryKeys = query.AllKeys;
-         if (queryKeys.Length > 0 && !(queryKeys.Length == 1 && (queryKeys[0] == "tag" || queryKeys[0] == "page") || queryKeys[0] == "category"))
+         if (query != null)
          {
-            _repository.UpdateBooksFromFilterUsingRawSql(query, "books", "list");
+            string[] queryKeys = query.AllKeys;
+            if (queryKeys.Length > 0 && !(queryKeys.Length == 1 && (queryKeys[0] == "tag" || queryKeys[0] == "page") || queryKeys[0] == "category"))
+            {
+               _repository.UpdateBooksFromFilterUsingRawSql(query, "books", "list");
+            }
          }
          IEnumerable<Book> books = null;
          if (currentCategory == null) //all categories
@@ -240,7 +255,7 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
       {
          Book book = _repository.Books.FirstOrDefault(p => p.BookId == id);
          if (book != null)
-        {
+         {
             return File(book.ImageData, book.ImageMimeType);
          }
          else
@@ -295,7 +310,7 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
             ICollection<Author> authors = _repository.Authors.Where(x => model.SelectedAuthors.Contains(x.AuthorId)).ToList();
             foreach (Author author in authors)
             {
-               book.AuthorsOfBooks.Add(new AuthorsOfBooks {Book = book, Author = author });
+               book.AuthorsOfBooks.Add(new AuthorsOfBooks { Book = book, Author = author });
             }
             ICollection<Tag> tags = _repository.Tags.Where(x => model.SelectedTags.Contains(x.TagId)).ToList();
             foreach (Tag tag in tags)
@@ -343,7 +358,7 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
          model.ImageMimeType = book.ImageMimeType;
          model.LanguageId = book.LanguageId;
          model.CategoryId = book.CategoryId;
-         model.SelectedAuthors = book.AuthorsOfBooks.Select(ab=>ab.Author).Select(a => a.AuthorId).ToList();
+         model.SelectedAuthors = book.AuthorsOfBooks.Select(ab => ab.Author).Select(a => a.AuthorId).ToList();
          model.Authors = _repository.Authors.OrderBy(x => x.LastName).Select(x => new SelectListItem { Value = x.AuthorId.ToString(), Text = x.LastName + " " + x.FirstName }).ToList();
 
          model.SelectedTags = book.BookTags.Select(a => a.TagId).ToList();
@@ -391,7 +406,7 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
                   {
                      foreach (Tag tag in tags)
                      {
-                        book.BookTags.Add(new BookTags {Tag = tag, Book = book });
+                        book.BookTags.Add(new BookTags { Tag = tag, Book = book });
                      }
                   }
                }
