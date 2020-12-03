@@ -89,14 +89,24 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
             _booksRequestManager = value;
          }
       }
+      [HttpGet]
+      public ActionResult Index()
+      {
+        return RedirectToAction("List");
+      }
 
       // GET: Category
       [HttpGet]
-      public ActionResult List(int page = 1, string category = null, string tag = null)
+      public ActionResult List(int page = 1, string category = "all", string tag = null)
       {
+         string defaultCategory = "all";
+         if (category == null)
+         {
+            category = defaultCategory;
+         }
          Category currentCategory = null;
          Tag currentTag = null;
-         if (category != null)
+         if (category != defaultCategory)
          {
             currentCategory = _repository.Categories.Where(cat => cat.NameForLinks == category).FirstOrDefault();
             if (currentCategory == null) //category does not exist
@@ -148,7 +158,7 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
                    .Skip((page - 1) * _booksPerPage)
                    .Take(_booksPerPage).ToList();
                viewModel.PagingInfo = new PagingInfo { CurrentPage = page, ItemsPerPage = _booksPerPage, TotalItems = _repository.Books.Count() };
-               viewModel.CurrentCategory = null;
+               viewModel.CurrentCategory = defaultCategory;
                viewModel.CurrentTag = null;
             }
             else //all categories & specific tag
@@ -158,7 +168,7 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
                    .Skip((page - 1) * _booksPerPage)
                    .Take(_booksPerPage).ToList();
                viewModel.PagingInfo = new PagingInfo { CurrentPage = page, ItemsPerPage = _booksPerPage, TotalItems = _repository.Books.Where(b => b.BookTags.Select(x => x.TagId).Contains(currentTag.TagId)).Count() };
-               viewModel.CurrentCategory = null;
+               viewModel.CurrentCategory = defaultCategory;
                viewModel.CurrentTag = currentTag.NameForLinks;
             }
          }
@@ -186,11 +196,16 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
       }
 
       [HttpGet]
-      public ActionResult ListToAppend(int page, string category = null, string tag = null)
+      public ActionResult ListToAppend(int page, string category = "all", string tag = null)
       {
+         string defaultCategory = "all";
+         if (category == null)
+         {
+            category = defaultCategory;
+         }
          Category currentCategory = null;
          Tag currentTag = null;
-         if (category != null)
+         if (category != defaultCategory)
          {
             currentCategory = _repository.Categories.Where(cat => cat.NameForLinks == category).FirstOrDefault();
             if (currentCategory == null) //category does not exist
@@ -285,9 +300,6 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
          return View(model);
       }
 
-      //POST: Books/Create
-      //To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-      // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
       [HttpPost]
       [ValidateAntiForgeryToken]
       public ActionResult Create([Bind("BookId", "Name", "LanguageId", "Pages", "Description", "CategoryId", "Year", "SelectedAuthors", "ImageData", "ImageMimeType", "SelectedTags")] CreateEditBookViewModel model, IFormFile image)

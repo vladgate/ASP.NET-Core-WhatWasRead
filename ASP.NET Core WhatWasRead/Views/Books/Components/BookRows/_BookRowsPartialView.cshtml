@@ -44,7 +44,7 @@
             <p>@((book.AuthorsOfBooks.Count() == 1 ? "Автор: " : "Авторы: ") + @book.DisplayAuthors())</p>
          </div>
          <div class="book-details">
-            <a href="@Url.RouteUrl("BooksIdAction", new { id = book.BookId, action = "Details" })">Подробнее</a>
+            <a href="@Url.RouteUrl("ControllerIdAction", new {controller = "Books", action = "Details",id = book.BookId })">Подробнее</a>
          </div>
       </div>
    }

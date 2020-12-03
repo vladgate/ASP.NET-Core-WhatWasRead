@@ -17,22 +17,7 @@
 
         <div class="bottom-paging-wrapper">
             <div class="bottom-paging">
-                @if (Model.CurrentCategory == null)
-                {
-                   for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
-                   {
-                      string url = Url.RouteUrl("PageRoute", new { controller = "Books", action = "List", page = i, tag = Model.CurrentTag });
-                      System.Collections.Specialized.NameValueCollection collection = Helper.GetQueryCollection(this.Context.Request.QueryString);
-                      if (collection.Count != 0)
-                      {
-                         url += Helper.BuildQueryString(this.Context.Request.QueryString);
-                      }
-                        <a href="@url" class="@(i == Model.PagingInfo.CurrentPage ? "page-link selected" : "page-link")">@i.ToString()</a>
-                   }
-                }
-                else
-                {
-                   for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
+                   @for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
                    {
                       string url = Url.RouteUrl("CategoryPageRoute", new { controller = "Books", action = "List", page = i, category = Model.CurrentCategory, tag = Model.CurrentTag });
                       System.Collections.Specialized.NameValueCollection collection = Helper.GetQueryCollection(this.Context.Request.QueryString);
@@ -43,7 +28,6 @@
 
                         <a href="@url" class="@(i == Model.PagingInfo.CurrentPage ? "page-link selected" : "page-link")">@i.ToString()</a>
                     }
-                }
             </div>
             <div class="btn-placeholder">
                 <button id="btn-load-more" class="btn btn-success" type="button" @(Model.PagingInfo.TotalPages == 0 || Model.PagingInfo.TotalPages == Model.PagingInfo.CurrentPage ? "disabled" : "")>Показать еще</button>

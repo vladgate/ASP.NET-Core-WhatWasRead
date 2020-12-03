@@ -6,21 +6,21 @@
    <ul id="list">
       @foreach (Category categ in Model.Categories)
       {
-         <li @(categ.NameForLinks == Model.CurrentCategory ? "class=li-selected" : "") data-target="@categ.NameForLinks">
-            @Html.RouteLink(categ.NameForLabels, "CategoryPageRoute", new { controller = "Books", action = "List", category = categ.NameForLinks, page = 1 })
-         </li>
+      <li @(categ.NameForLinks == Model.CurrentCategory ? "class=li-selected" : "") data-target="@categ.NameForLinks">
+         @Html.RouteLink(categ.NameForLabels, "CategoryPageRoute", new { controller = "Books", action = "List", category = categ.NameForLinks, page = 1 })
+      </li>
       }
    </ul>
    <h3>Фильтр</h3>
    <span class="filter-span">
       Язык:
    </span>
-   <ul class="filter-ul" id="filter-lang" data-target="@Model.LanguageQueryWord">
+   <ul class="filter-ul" id="filter-lang" data-target="@NavigationViewModel.LanguageQueryWord">
       @foreach (Language lang in Model.Languages)
       {
          <li class="filter-li">
             @{bool checked1; }
-            <a class="a-checkbox-filter" href="@Html.CreateFilterPartOfLink(this.Context.Request.Path, Helper.GetQueryCollection(this.Context.Request.QueryString), Model.LanguageQueryWord, lang.NameForLinks, out checked1)">
+            <a class="a-checkbox-filter" href="@Html.CreateFilterPartOfLink(this.Context.Request.Path, Helper.GetQueryCollection(this.Context.Request.QueryString), NavigationViewModel.LanguageQueryWord, lang.NameForLinks, out checked1)">
                <input class="filter-checkbox" type="checkbox" id="@lang.NameForLinks" @(checked1 ? "checked" : "") />
                <label class="filter-label">@lang.NameForLabels</label>
             </a>
@@ -31,12 +31,12 @@
    <span class="filter-span">
       Автор:
    </span>
-   <ul class="filter-ul" id="filter-author" data-target="@Model.AuthorQueryWord">
+   <ul class="filter-ul" id="filter-author" data-target="@NavigationViewModel.AuthorQueryWord">
       @foreach (Author author in Model.Authors)
       {
          <li class="filter-li">
             @{bool checked2; }
-            <a class="a-checkbox-filter" href="@Html.CreateFilterPartOfLink(this.Context.Request.Path, Helper.GetQueryCollection(this.Context.Request.QueryString), Model.AuthorQueryWord, author.AuthorId.ToString(), out checked2)">
+            <a class="a-checkbox-filter" href="@Html.CreateFilterPartOfLink(this.Context.Request.Path, Helper.GetQueryCollection(this.Context.Request.QueryString), NavigationViewModel.AuthorQueryWord, author.AuthorId.ToString(), out checked2)">
                <input class="filter-checkbox" type="checkbox" id="@author.AuthorId" @(checked2 ? "checked" : "") />
                <label class="filter-label">@author.DisplayText</label>
             </a>
@@ -44,7 +44,7 @@
       }
    </ul>
 
-   <div id="filter-pages" data-target="@Model.PagesQueryWord" data-min="@Model.MinPagesExpected" data-max="@Model.MaxPagesExpected">
+   <div id="filter-pages" data-target="@NavigationViewModel.PagesQueryWord" data-min="@Model.MinPagesExpected" data-max="@Model.MaxPagesExpected">
       <span class="filter-span">
          Количество страниц:
       </span>

@@ -48,33 +48,18 @@ namespace ASP.NET_Core_WhatWasRead
             endpoints.MapControllerRoute(
                    name: "Default",
                    pattern: "/",
-                   defaults: new { controller = "Home", action = "Index" }); //page = 1, category = null, accepts filter via querystring
-
+                   defaults: new { controller = "Books", action = "List" }); //page = 1, category = "all", accepts filter via querystring
             endpoints.MapControllerRoute(
-                   name: "Default",
-                   pattern: "/",
-                   defaults: new { controller = "Books", action = "List" }); //page = 1, category = null, accepts filter via querystring
-            endpoints.MapControllerRoute(
-                   name: "PageRoute",
-                   pattern: "books/list/page{page}",
-                   defaults: new { controller = "Books", action = "List" }, //page = 1, category = null, accepts filter via querystring
-                   constraints: new { page = @"\d+" }
-                   );
-            endpoints.MapControllerRoute(
-                   name: "BooksIdAction",
-                   pattern: "books/{id}/{action}",
-                   defaults: new { controller = "Books", action = "Details" }, //page = 1, category = null, accepts filter via querystring
+                   name: "ControllerIdAction",
+                   pattern: "{controller}/{action}/{id?}",
+                   defaults: new { controller = "Books", action = "Index" }, //page = 1, category = "all", accepts filter via querystring
                    constraints: new { id = @"\d+" }
                    );
             endpoints.MapControllerRoute(
                    name: "CategoryPageRoute",
                    pattern: "books/list/{category}/page{page}",
-                   defaults: new { controller = "Books", action = "List", page = 1 }, //page = 1, category = null, accepts filter via querystring
+                   defaults: new { controller = "Books", action = "List", category = "all", page = 1 }, //page = 1, category = "all", accepts filter via querystring
                    constraints: new { page = @"\d+" }
-                   );
-            endpoints.MapControllerRoute(
-                   name: null,
-                   pattern: "{controller}/{action}"
                    );
          });
       }

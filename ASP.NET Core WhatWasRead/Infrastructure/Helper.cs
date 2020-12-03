@@ -34,7 +34,6 @@ namespace ASP.NET_Core_WhatWasRead.Infrastructure
       }
       public static HtmlString CreateBookList(this IHtmlHelper html, IEnumerable<Book> books)
       {
-         //UrlHelper urlHelper = new UrlHelper(html.ViewContext.RequestContext);
          UrlHelper urlHelper = new UrlHelper(html.ViewContext);
          StringBuilder result = new StringBuilder();
          int counter = 0;
@@ -78,8 +77,7 @@ namespace ASP.NET_Core_WhatWasRead.Infrastructure
             TagBuilder bookLink = new TagBuilder("div");
             bookLink.AddCssClass("book-details");
             TagBuilder link = new TagBuilder("a");
-            //string route = @"/books/" + book.BookId;
-            string route = urlHelper.RouteUrl(new UrlRouteContext { RouteName = "BooksIdAction", Values = new { id = book.BookId, action = "Details" } });
+            string route = urlHelper.RouteUrl(new UrlRouteContext { RouteName = "ControllerIdAction", Values = new { controller="Books" , action = "Details", id = book.BookId } });
             link.MergeAttribute("href", route);
             link.InnerHtml.Append("Подробнее");
             bookLink.InnerHtml.AppendHtml(link);
