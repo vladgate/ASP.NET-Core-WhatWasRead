@@ -129,7 +129,7 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
          if (query != null)
          {
             string[] queryKeys = query.AllKeys;
-            if (queryKeys.Length > 0 && !(queryKeys.Length == 1 && (queryKeys[0] == "tag" || queryKeys[0] == "page") || queryKeys[0] == "category"))
+            if (queryKeys.Length > 0 && !(queryKeys.Length == 1 && (queryKeys[0] == "tag" || queryKeys[0] == "page" || queryKeys[0] == "category")))
             {
                _repository.UpdateBooksFromFilterUsingRawSql(query, "books", "list");
                var pages = query["pages"];
@@ -227,7 +227,7 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
          if (query != null)
          {
             string[] queryKeys = query.AllKeys;
-            if (queryKeys.Length > 0 && !(queryKeys.Length == 1 && (queryKeys[0] == "tag" || queryKeys[0] == "page") || queryKeys[0] == "category"))
+            if (queryKeys.Length > 0 && !(queryKeys.Length == 1 && (queryKeys[0] == "tag" || queryKeys[0] == "page" || queryKeys[0] == "category")))
             {
                _repository.UpdateBooksFromFilterUsingRawSql(query, "books", "list");
             }
@@ -485,7 +485,5 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
          }
          base.Dispose(disposing);
       }
-
-
    }
 }
