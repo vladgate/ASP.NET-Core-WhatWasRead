@@ -324,10 +324,13 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
             {
                book.AuthorsOfBooks.Add(new AuthorsOfBooks { Book = book, Author = author });
             }
-            ICollection<Tag> tags = _repository.Tags.Where(x => model.SelectedTags.Contains(x.TagId)).ToList();
-            foreach (Tag tag in tags)
+            if (model.SelectedTags != null)
             {
-               book.BookTags.Add(new BookTags { Tag = tag, Book = book });
+               ICollection<Tag> tags = _repository.Tags.Where(x => model.SelectedTags.Contains(x.TagId)).ToList();
+               foreach (Tag tag in tags)
+               {
+                  book.BookTags.Add(new BookTags { Tag = tag, Book = book });
+               }
             }
             book.CategoryId = model.CategoryId;
             book.Description = model.Description;
