@@ -1,5 +1,4 @@
-﻿@model Author
-
+﻿@model (Author author, string error)
 @{
     ViewBag.Title = "Авторы: удаление";
 }
@@ -8,32 +7,33 @@
 
 <h3 style="margin-left: 10px">Вы точно хотите удалить этого автора?</h3>
 <div style="margin-left: 10px">
-    <h4 style="margin-left: 10px">Автор:</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.LabelFor(model => model.LastName,"Фамилия:")
-        </dt>
+   <h4 style="margin-left: 10px">Автор:</h4>
+   <hr />
+   <dl class="dl-horizontal">
+      <dt>
+         @Html.LabelFor(model => model.author.LastName, "Фамилия:")
+      </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
+      <dd>
+         @Html.DisplayFor(model => model.author.LastName)
+      </dd>
 
-        <dt>
-            @Html.LabelFor(model => model.FirstName, "Имя:")
-        </dt>
+      <dt>
+         @Html.LabelFor(model => model.author.FirstName, "Имя:")
+      </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-    </dl>
+      <dd>
+         @Html.DisplayFor(model => model.author.FirstName)
+      </dd>
+   </dl>
+   <div class="text-danger">@Model.error</div>
+   @using (Html.BeginForm())
+   {
+      @Html.AntiForgeryToken()
 
-    @using (Html.BeginForm()) {
-        @Html.AntiForgeryToken()
-
-        <div class="form-actions no-color">
-            <input type="submit" value="Удалить" class="btn btn-default" /> |
-            @Html.ActionLink("К списку авторов", "Index")
-        </div>
-    }
+      <div class="form-actions no-color">
+         <input type="submit" value="Удалить" class="btn btn-default" /> |
+         @Html.ActionLink("К списку авторов", "Index")
+      </div>
+   }
 </div>

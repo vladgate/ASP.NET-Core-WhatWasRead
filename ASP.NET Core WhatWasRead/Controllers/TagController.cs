@@ -102,7 +102,7 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
          {
             return NotFound();
          }
-         return View(tag);
+         return View((tag,""));
       }
 
       // POST: Tag/Delete/5
@@ -115,8 +115,19 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
          {
             return NotFound();
          }
-         _repository.RemoveTag(tag);
-         _repository.SaveChanges();
+         try
+         {
+            _repository.RemoveTag(tag);
+            _repository.SaveChanges();
+         }
+         catch (Exception ex) when (ex.InnerException != null && ex.InnerException.Message.Contains("DELETE statement conflicted with the REFERENCE constraint"))
+         {
+            return View((tag, "С данным тегом имеются книги, поэтому сейчас удалить его нельзя."));
+         }
+         catch (Exception)
+         {
+            return BadRequest();
+         }
          return RedirectToAction("Index");
       }
 

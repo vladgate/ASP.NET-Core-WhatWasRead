@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ASP.NET_Core_WhatWasRead.Migrations
 {
     [DbContext(typeof(WhatWasReadContext))]
-    [Migration("20201101144013_Initial")]
+    [Migration("20201213185337_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,15 +45,15 @@ namespace ASP.NET_Core_WhatWasRead.Migrations
 
             modelBuilder.Entity("ASP.NET_Core_WhatWasRead.App_Data.DBModels.AuthorsOfBooks", b =>
                 {
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
                     b.Property<int>("BookId")
                         .HasColumnType("int");
 
-                    b.HasKey("AuthorId", "BookId");
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("BookId");
+                    b.HasKey("BookId", "AuthorId");
+
+                    b.HasIndex("AuthorId");
 
                     b.ToTable("AuthorsOfBooks");
                 });
@@ -335,7 +335,7 @@ namespace ASP.NET_Core_WhatWasRead.Migrations
                     b.HasOne("ASP.NET_Core_WhatWasRead.App_Data.DBModels.Author", "Author")
                         .WithMany("AuthorsOfBooks")
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ASP.NET_Core_WhatWasRead.App_Data.DBModels.Book", "Book")
@@ -350,13 +350,13 @@ namespace ASP.NET_Core_WhatWasRead.Migrations
                     b.HasOne("ASP.NET_Core_WhatWasRead.App_Data.DBModels.Category", "Category")
                         .WithMany("Books")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ASP.NET_Core_WhatWasRead.App_Data.DBModels.Language", "Language")
                         .WithMany("Books")
                         .HasForeignKey("LanguageId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -371,7 +371,7 @@ namespace ASP.NET_Core_WhatWasRead.Migrations
                     b.HasOne("ASP.NET_Core_WhatWasRead.App_Data.DBModels.Tag", "Tag")
                         .WithMany("BookTags")
                         .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

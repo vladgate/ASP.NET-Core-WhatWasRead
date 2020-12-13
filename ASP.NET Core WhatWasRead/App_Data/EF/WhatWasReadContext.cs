@@ -32,13 +32,41 @@ namespace ASP.NET_Core_WhatWasRead.App_Data.EF
 
       public virtual DbSet<BooksWithAuthor> BooksWithAuthors { get; set; } //view
 
-
       protected override void OnModelCreating(ModelBuilder modelBuilder)
       {
-         modelBuilder.Entity<AuthorsOfBooks>()
-            .HasKey(ab => new { ab.AuthorId, ab.BookId });
-         modelBuilder.Entity<BookTags>()
-            .HasKey(bt => new { bt.BookId, bt.TagId });
+         modelBuilder.Entity<Book>(a =>
+         {
+            a.HasOne<Category>(b => b.Category)
+               .WithMany(c => c.Books)
+               .HasForeignKey(b => b.CategoryId)
+               .OnDelete(DeleteBehavior.Restrict);
+            a.HasOne<Language>(b => b.Language)
+               .WithMany(l => l.Books)
+               .HasForeignKey(b => b.LanguageId)
+               .OnDelete(DeleteBehavior.Restrict);
+         });
+
+         modelBuilder.Entity<AuthorsOfBooks>(a =>
+         {
+            a.HasKey(ab => new { ab.BookId, ab.AuthorId });
+            a.HasOne<Author>(ab => ab.Author)
+               .WithMany(a => a.AuthorsOfBooks)
+               .OnDelete(DeleteBehavior.Restrict);
+            a.HasOne<Book>(ab => ab.Book)
+               .WithMany(a => a.AuthorsOfBooks)
+               .OnDelete(DeleteBehavior.Cascade);
+         });
+
+         modelBuilder.Entity<BookTags>(a =>
+         {
+            a.HasKey(ab => new { ab.BookId, ab.TagId });
+            a.HasOne<Tag>(bt => bt.Tag)
+               .WithMany(a => a.BookTags)
+               .OnDelete(DeleteBehavior.Restrict);
+            a.HasOne<Book>(bt => bt.Book)
+               .WithMany(a => a.BookTags)
+               .OnDelete(DeleteBehavior.Cascade);
+         });
 
          //init data
          modelBuilder.Entity<DBModels.Category>().HasData(new Category[]

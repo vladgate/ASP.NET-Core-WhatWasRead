@@ -7,21 +7,21 @@ namespace ASP.NET_Core_WhatWasRead.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-         migrationBuilder.CreateTable(
-             name: "Authors",
-             columns: table => new
-             {
-                AuthorId = table.Column<int>(nullable: false)
-                     .Annotation("SqlServer:Identity", "1, 1"),
-                FirstName = table.Column<string>(maxLength: 30, nullable: false),
-                LastName = table.Column<string>(maxLength: 30, nullable: false)
-             },
-             constraints: table =>
-             {
-                table.PrimaryKey("PK_Authors", x => x.AuthorId);
-             });
+            migrationBuilder.CreateTable(
+                name: "Authors",
+                columns: table => new
+                {
+                    AuthorId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FirstName = table.Column<string>(maxLength: 30, nullable: false),
+                    LastName = table.Column<string>(maxLength: 30, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Authors", x => x.AuthorId);
+                });
 
-         migrationBuilder.CreateTable(
+            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -125,13 +125,13 @@ namespace ASP.NET_Core_WhatWasRead.Migrations
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "CategoryId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Books_Languages_LanguageId",
                         column: x => x.LanguageId,
                         principalTable: "Languages",
                         principalColumn: "LanguageId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -143,13 +143,13 @@ namespace ASP.NET_Core_WhatWasRead.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AuthorsOfBooks", x => new { x.AuthorId, x.BookId });
+                    table.PrimaryKey("PK_AuthorsOfBooks", x => new { x.BookId, x.AuthorId });
                     table.ForeignKey(
                         name: "FK_AuthorsOfBooks_Authors_AuthorId",
                         column: x => x.AuthorId,
                         principalTable: "Authors",
                         principalColumn: "AuthorId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_AuthorsOfBooks_Books_BookId",
                         column: x => x.BookId,
@@ -179,7 +179,7 @@ namespace ASP.NET_Core_WhatWasRead.Migrations
                         column: x => x.TagId,
                         principalTable: "Tags",
                         principalColumn: "TagId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.InsertData(
@@ -223,9 +223,9 @@ namespace ASP.NET_Core_WhatWasRead.Migrations
                 values: new object[] { 3, "between", "Pages", "Количество страниц", 1, "pages" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AuthorsOfBooks_BookId",
+                name: "IX_AuthorsOfBooks_AuthorId",
                 table: "AuthorsOfBooks",
-                column: "BookId");
+                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Books_CategoryId",
@@ -246,24 +246,23 @@ namespace ASP.NET_Core_WhatWasRead.Migrations
                 name: "IX_Filters_FilterTargetId",
                 table: "Filters",
                 column: "FilterTargetId");
-
-         //create view
-         string createViewQuery = @"GO
-                                  CREATE VIEW [dbo].[BooksWithAuthors]
-                                  AS 
-                                  Select b.*, a.*, l.NameForLinks, t.TagId, t.NameForLabels as TagNameForLabels, t.NameForLinks as TagNameForLinks from [dbo].[Books] as b
-                                  left join [dbo].[AuthorsOfBooks] as ab
-                                  on b.BookId = ab.BookId
-                                  inner join [dbo].[Authors] as a
-                                  on ab.AuthorId = a.AuthorId
-                                  left join [dbo].[Languages] as l
-                                  on b.LanguageId = l.LanguageId
-                                  left join [dbo].BookTags as bt
-                                  on b.BookId = bt.BookId
-                                  left join [dbo].Tags as t
-                                  on bt.TagId = t.TagId;
-                                  GO ";
-         migrationBuilder.Sql(createViewQuery);
+            //create view
+            string createViewQuery = @"GO
+                                     CREATE VIEW [dbo].[BooksWithAuthors]
+                                     AS 
+                                     Select b.*, a.*, l.NameForLinks, t.TagId, t.NameForLabels as TagNameForLabels, t.NameForLinks as TagNameForLinks from [dbo].[Books] as b
+                                     left join [dbo].[AuthorsOfBooks] as ab
+                                     on b.BookId = ab.BookId
+                                     inner join [dbo].[Authors] as a
+                                     on ab.AuthorId = a.AuthorId
+                                     left join [dbo].[Languages] as l
+                                     on b.LanguageId = l.LanguageId
+                                     left join [dbo].BookTags as bt
+                                     on b.BookId = bt.BookId
+                                     left join [dbo].Tags as t
+                                     on bt.TagId = t.TagId;
+                                     GO ";
+            migrationBuilder.Sql(createViewQuery);
 
       }
 
@@ -296,10 +295,11 @@ namespace ASP.NET_Core_WhatWasRead.Migrations
             migrationBuilder.DropTable(
                 name: "Languages");
 
-         migrationBuilder.Sql(@" GO
+            migrationBuilder.Sql(@" GO
                                   DROP VIEW [dbo].[BooksWithAuthors];
                                   GO
                                   ");
+
       }
    }
 }

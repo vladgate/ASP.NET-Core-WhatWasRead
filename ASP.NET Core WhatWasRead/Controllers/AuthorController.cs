@@ -98,7 +98,7 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
          {
             return NotFound();
          }
-         return View(author);
+         return View((author,""));
       }
 
       // POST: Author/Delete/5
@@ -111,8 +111,20 @@ namespace ASP.NET_Core_WhatWasRead.Controllers
          {
             return NotFound();
          }
-         _repository.RemoveAuthor(author);
-         _repository.SaveChanges();
+         try
+         {
+            _repository.RemoveAuthor(author);
+            _repository.SaveChanges();
+         }
+         catch (Exception ex) when (ex.InnerException != null && ex.InnerException.Message.Contains("DELETE statement conflicted with the REFERENCE constraint"))
+         {
+            return View((author, "У даного автора имеются книги, поэтому сейчас удалить его нельзя."));
+         }
+
+         catch (Exception)
+         {
+            return BadRequest();
+         }
          return RedirectToAction("Index");
       }
 

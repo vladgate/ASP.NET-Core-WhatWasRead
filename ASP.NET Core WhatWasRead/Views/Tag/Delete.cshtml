@@ -1,4 +1,4 @@
-﻿@model Tag
+﻿@model (Tag tag, string error)
 
 @{
     ViewBag.Title = "Теги: удаление";
@@ -8,25 +8,25 @@
 
 <h3 style="margin-left: 10px">Вы точно хотите удалить этот тег?</h3>
 <div style="margin-left: 10px">
-    <h4 style="margin-left: 10px">Тег</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.LabelFor(model => model.NameForLabels, "Название для пользователя:")
+            @Html.LabelFor(model => model.tag.NameForLabels, "Название для пользователя:")
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.NameForLabels)
+            @Html.DisplayFor(model => model.tag.NameForLabels)
         </dd>
 
         <dt>
-            @Html.LabelFor(model => model.NameForLinks, "Название для ссылки:")
+            @Html.LabelFor(model => model.tag.NameForLinks, "Название для ссылки:")
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.NameForLinks)
+            @Html.DisplayFor(model => model.tag.NameForLinks)
         </dd>
     </dl>
+   <div class="text-danger">@Model.error</div>
 
     @using (Html.BeginForm()) {
         @Html.AntiForgeryToken()
